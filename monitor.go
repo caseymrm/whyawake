@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/caseymrm/go-assertions"
 	"github.com/caseymrm/go-statusbar/tray"
 )
 
@@ -22,6 +23,7 @@ var canSleepTitle = "😴"
 var cantSleepTitle = "😫"
 
 func pmset() *tray.MenuState {
+	asserts := assertions.GetAssertions()
 	out, err := exec.Command("/usr/bin/pmset", "-g", "assertions").Output()
 	if err != nil {
 		log.Fatal(err)
@@ -41,6 +43,11 @@ func pmset() *tray.MenuState {
 			break
 		}
 		if words[1] == "1" && sleepKeywords[words[0]] {
+			canSleep = false
+		}
+	}
+	for key, val := range asserts {
+		if val == 1 && sleepKeywords[key] {
 			canSleep = false
 		}
 	}

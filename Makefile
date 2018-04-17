@@ -1,7 +1,7 @@
 BINARY=cantsleep
-SOURCEDIR=../../tray
-LIBDIR=.
-SOURCES := $(shell find $(SOURCEDIR) $(LIBDIR) -name '*.go' -o -name '*.m' -o -name '*.h')
+SOURCEDIR=.
+LIBDIR=../go-statusbar/tray/
+SOURCES := $(shell find $(SOURCEDIR) $(LIBDIR) -name '*.go' -o -name '*.m' -o -name '*.h' -o -name '*.c')
 
 run: $(BINARY)
 	./$(BINARY)
