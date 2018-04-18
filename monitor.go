@@ -1,13 +1,8 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
-	"log"
-	"os/exec"
 	"regexp"
-	"strings"
 	"time"
 
 	"github.com/caseymrm/go-assertions"
@@ -24,28 +19,8 @@ var cantSleepTitle = "😫"
 
 func pmset() *tray.MenuState {
 	asserts := assertions.GetAssertions()
-	out, err := exec.Command("/usr/bin/pmset", "-g", "assertions").Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-	scanner := bufio.NewScanner(bytes.NewReader(out))
-	if scanner.Scan() {
-		//fmt.Printf("Timestamp: %s\n", scanner.Text())
-	}
-	if scanner.Scan() {
-		//fmt.Printf("Assertion status: %s\n", scanner.Text())
-	}
+	pidAsserts := assertions.GetPIDAssertions()
 	canSleep := true
-	for scanner.Scan() {
-		words := strings.Fields(scanner.Text())
-		if len(words) != 2 {
-			//fmt.Printf("Owning process: %s\n", scanner.Text())
-			break
-		}
-		if words[1] == "1" && sleepKeywords[words[0]] {
-			canSleep = false
-		}
-	}
 	for key, val := range asserts {
 		if val == 1 && sleepKeywords[key] {
 			canSleep = false
@@ -54,15 +29,12 @@ func pmset() *tray.MenuState {
 	ms := tray.MenuState{
 		Items: make([]tray.MenuItem, 0, 1),
 	}
-	for scanner.Scan() {
-		matches := processRe.FindSubmatch(scanner.Bytes())
-		if len(matches) != 6 {
-			continue
-		}
-		if sleepKeywords[string(matches[4])] {
+	for key := range sleepKeywords {
+		pids := pidAsserts[key]
+		for _, pid := range pids {
 			ms.Items = append(ms.Items, tray.MenuItem{
-				Text:     fmt.Sprintf("%s (pid %s)", matches[5], matches[1]),
-				Callback: string(matches[1]),
+				Text:     fmt.Sprintf("%s (pid %d)", pid.Name, pid.PID),
+				Callback: fmt.Sprintf("%d", pid.PID),
 			})
 		}
 	}
