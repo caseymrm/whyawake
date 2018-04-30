@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"regexp"
 
 	"github.com/caseymrm/go-assertions"
 	"github.com/caseymrm/go-statusbar/tray"
 )
 
-var processRe = regexp.MustCompile(`pid (\d+)\(([^)]+)\): \[0x[0-9a-f]+\] (\d\d:\d\d:\d\d) (\w+) named: "(.+)"`)
 var sleepKeywords = map[string]bool{
 	"PreventUserIdleDisplaySleep": true,
 	//"PreventUserIdleSystemSleep":  true,
