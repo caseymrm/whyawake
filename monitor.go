@@ -64,8 +64,10 @@ func menuState() *tray.MenuState {
 }
 
 func monitorAssertionChanges(channel chan assertions.AssertionChange) {
-	for range channel {
-		tray.App().SetMenuState(menuState())
+	for change := range channel {
+		if sleepKeywords[change.Type] {
+			tray.App().SetMenuState(menuState())
+		}
 	}
 }
 
