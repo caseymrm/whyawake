@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"regexp"
-	"time"
 
 	"github.com/caseymrm/go-assertions"
 	"github.com/caseymrm/go-statusbar/tray"
@@ -17,51 +16,56 @@ var sleepKeywords = map[string]bool{
 var canSleepTitle = "😴"
 var cantSleepTitle = "😫"
 
-func pmset() *tray.MenuState {
+func canSleep() bool {
 	asserts := assertions.GetAssertions()
-	pidAsserts := assertions.GetPIDAssertions()
-	canSleep := true
 	for key, val := range asserts {
 		if val == 1 && sleepKeywords[key] {
-			canSleep = false
+			return false
 		}
 	}
-	ms := tray.MenuState{
-		Items: make([]tray.MenuItem, 0, 1),
-	}
+	return true
+}
+
+func wakingItems() []tray.MenuItem {
+	items := make([]tray.MenuItem, 0, 1)
+	pidAsserts := assertions.GetPIDAssertions()
 	for key := range sleepKeywords {
 		pids := pidAsserts[key]
 		for _, pid := range pids {
-			ms.Items = append(ms.Items, tray.MenuItem{
+			items = append(items, tray.MenuItem{
 				Text:     fmt.Sprintf("%s (pid %d)", pid.Name, pid.PID),
 				Callback: fmt.Sprintf("%d", pid.PID),
 			})
 		}
+	}
+	preAmble := []tray.MenuItem{{Text: "Your laptop can sleep!"}}
+	if len(items) == 1 {
+		preAmble = []tray.MenuItem{{Text: "1 process is keeping your laptop awake:"}}
+	} else if len(items) > 1 {
+		preAmble = []tray.MenuItem{{Text: fmt.Sprintf("%d processes are keeping your laptop awake:", len(items))}}
+	}
+	if len(items) > 0 {
+		preAmble = append(preAmble, tray.MenuItem{Text: "---"})
+	}
+	return append(preAmble, items...)
+}
+
+func menuState() *tray.MenuState {
+	canSleep := canSleep()
+	ms := tray.MenuState{
+		Items: wakingItems(),
 	}
 	if canSleep {
 		ms.Title = canSleepTitle
 	} else {
 		ms.Title = cantSleepTitle
 	}
-	preAmble := []tray.MenuItem{{Text: "Your laptop can sleep!"}}
-	if !canSleep {
-		if len(ms.Items) == 1 {
-			preAmble = []tray.MenuItem{{Text: "1 process is keeping your laptop awake:"}}
-		} else {
-			preAmble = []tray.MenuItem{{Text: fmt.Sprintf("%d processes are keeping your laptop awake:", len(ms.Items))}}
-		}
-	}
-	if len(ms.Items) > 0 {
-		preAmble = append(preAmble, tray.MenuItem{Text: "---"})
-	}
-	ms.Items = append(preAmble, ms.Items...)
 	return &ms
 }
 
-func monitorPmSet() {
-	for {
-		tray.App().SetMenuState(pmset())
-		time.Sleep(10 * time.Second)
+func monitorAssertionChanges(channel chan assertions.AssertionChange) {
+	for range channel {
+		tray.App().SetMenuState(menuState())
 	}
 }
 
@@ -72,14 +76,16 @@ func handleClicks(callback chan string) {
 }
 
 func main() {
-	go monitorPmSet()
-	callback := make(chan string)
+	assertionsChannel := make(chan assertions.AssertionChange)
+	trayChannel := make(chan string)
+	assertions.SubscribeAssertionChanges(assertionsChannel)
+	go monitorAssertionChanges(assertionsChannel)
 	app := tray.App()
-	app.Clicked = callback
+	app.SetMenuState(menuState())
+	app.Clicked = trayChannel
 	app.MenuOpened = func() []tray.MenuItem {
-		ms := pmset()
-		return ms.Items
+		return wakingItems()
 	}
-	go handleClicks(callback)
+	go handleClicks(trayChannel)
 	app.RunApplication()
 }
