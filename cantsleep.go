@@ -24,7 +24,7 @@ func canSleep() bool {
 	return true
 }
 
-func wakingItems() []tray.MenuItem {
+func menuItems() []tray.MenuItem {
 	items := make([]tray.MenuItem, 0, 1)
 	pidAsserts := assertions.GetPIDAssertions()
 	for key := range sleepKeywords {
@@ -49,16 +49,14 @@ func wakingItems() []tray.MenuItem {
 }
 
 func menuState() *tray.MenuState {
-	canSleep := canSleep()
-	ms := tray.MenuState{
-		Items: wakingItems(),
+	if canSleep() {
+		return &tray.MenuState{
+			Title: canSleepTitle,
+		}
 	}
-	if canSleep {
-		ms.Title = canSleepTitle
-	} else {
-		ms.Title = cantSleepTitle
+	return &tray.MenuState{
+		Title: cantSleepTitle,
 	}
-	return &ms
 }
 
 func monitorAssertionChanges(channel chan assertions.AssertionChange) {
@@ -84,7 +82,7 @@ func main() {
 	app.SetMenuState(menuState())
 	app.Clicked = trayChannel
 	app.MenuOpened = func() []tray.MenuItem {
-		return wakingItems()
+		return menuItems()
 	}
 	go handleClicks(trayChannel)
 	app.RunApplication()
