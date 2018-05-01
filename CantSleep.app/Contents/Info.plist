@@ -5,7 +5,7 @@
   <key>CFBundleExecutable</key>
   <string>cantsleep</string>
   <key>CFBundleIconFile</key>
-  <string>icon.icns</string>
+  <string>icon</string>
   <key>CFBundleGetInfoString</key>
   <string>CantSleep</string>
   <key>CFBundleIdentifier</key>
