@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"strconv"
+	"syscall"
 
 	"github.com/caseymrm/go-assertions"
 	"github.com/caseymrm/go-statusbar/tray"
@@ -68,8 +70,18 @@ func monitorAssertionChanges(channel chan assertions.AssertionChange) {
 }
 
 func handleClicks(callback chan string) {
-	for pid := range callback {
-		fmt.Printf("PID Clicked %s\n", pid)
+	for pidString := range callback {
+		pid, _ := strconv.Atoi(pidString)
+		go func() {
+			switch tray.App().Alert("Kill process?", fmt.Sprintf("PID %d", pid), "Kill", "Kill -9", "Cancel") {
+			case 0:
+				fmt.Printf("Killing pid %d\n", pid)
+				syscall.Kill(pid, syscall.SIGTERM)
+			case 1:
+				fmt.Printf("Killing -9 pid %d\n", pid)
+				syscall.Kill(pid, syscall.SIGKILL)
+			}
+		}()
 	}
 }
 
