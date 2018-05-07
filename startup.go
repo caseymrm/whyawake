@@ -45,7 +45,6 @@ func addStartupItem() {
 		log.Printf("os.Executable: %v", err)
 		return
 	}
-	fmt.Println(executable)
 	f, err := os.Create(path)
 	if err != nil {
 		log.Printf("os.Create: %v", err)

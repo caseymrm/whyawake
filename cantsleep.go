@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"syscall"
@@ -13,6 +14,7 @@ import (
 var sleepKeywords = map[string]bool{
 	"PreventUserIdleDisplaySleep": true,
 	//"PreventUserIdleSystemSleep":  true,
+	"NoDisplaySleepAssertion": true,
 }
 var canSleepTitle = "😴"
 var cantSleepTitle = "😫"
@@ -30,9 +32,18 @@ func canSleep() bool {
 func menuItems() []tray.MenuItem {
 	processes := make([]tray.MenuItem, 0)
 	pidAsserts := assertions.GetPIDAssertions()
+	preventingSleep := false
 	for key := range sleepKeywords {
 		pids := pidAsserts[key]
 		for _, pid := range pids {
+			if pid.PID == cafPID {
+				preventingSleep = true
+				processes = append(processes, tray.MenuItem{
+					Text:     "You have prevented sleep for " + preventionRemaining() + " longer",
+					Callback: fmt.Sprintf("pid:%d", pid.PID),
+				})
+				continue
+			}
 			processes = append(processes, tray.MenuItem{
 				Text:     pid.Name,
 				Callback: fmt.Sprintf("pid:%d", pid.PID),
@@ -41,25 +52,20 @@ func menuItems() []tray.MenuItem {
 	}
 	items := []tray.MenuItem{{Text: "Your laptop can sleep!"}}
 	if len(processes) > 0 {
-		if len(processes) == 1 {
-			items = []tray.MenuItem{{Text: "1 process is keeping your laptop awake:"}}
-		} else if len(processes) > 1 {
-			items = []tray.MenuItem{{Text: fmt.Sprintf("%d processes are keeping your laptop awake:", len(processes))}}
+		text := "1 process is keeping your laptop awake"
+		if len(processes) > 1 {
+			text = fmt.Sprintf("%d processes are keeping your laptop awake", len(processes))
 		}
-		items = append(items, processes...)
-		items = append(items, tray.MenuItem{Text: "---"})
+		items = []tray.MenuItem{{
+			Text:     text,
+			Children: processes,
+		}}
 	}
 	items = append(items, tray.MenuItem{
-		Text: "Prevent sleep",
-		Children: []tray.MenuItem{
-			{Text: "5 minutes", Callback: "prevent:5"},
-			{Text: "10 minutes", Callback: "prevent:10"},
-			{Text: "15 minutes", Callback: "prevent:15"},
-			{Text: "30 minutes", Callback: "prevent:30"},
-			{Text: "1 hour", Callback: "prevent:60"},
-			{Text: "2 hours", Callback: "prevent:120"},
-			{Text: "5 hours", Callback: "prevent:300"},
-		},
+		Text:     "Prevent sleep",
+		Children: sleepOptions,
+		Callback: "prevent_sleep",
+		State:    preventingSleep,
 	})
 	startupItem := tray.MenuItem{Text: "Run at start up", Callback: "startup"}
 	if runningAtStartup() {
@@ -68,53 +74,61 @@ func menuItems() []tray.MenuItem {
 	return append(items, startupItem)
 }
 
-func menuState() *tray.MenuState {
+func setMenuState() {
+	title := cantSleepTitle
 	if canSleep() {
-		return &tray.MenuState{
-			Title: canSleepTitle,
-		}
+		title = canSleepTitle
 	}
-	return &tray.MenuState{
-		Title: cantSleepTitle,
-	}
+	title += preventionRemaining()
+	tray.App().SetMenuState(&tray.MenuState{
+		Title: title,
+		Items: menuItems(),
+	})
 }
 
 func monitorAssertionChanges(channel chan assertions.AssertionChange) {
 	for change := range channel {
 		if sleepKeywords[change.Type] {
-			tray.App().SetMenuState(menuState())
+			setMenuState()
 		}
 	}
 }
 
 func handleClicks(callback chan string) {
 	for clicked := range callback {
-		switch clicked {
-		case "startup":
-			if runningAtStartup() {
-				removeStartupItem()
-			} else {
-				addStartupItem()
-			}
-		default:
-			if strings.HasPrefix(clicked, "pid:") {
-				pid, _ := strconv.Atoi(clicked[4:])
-				go func() {
-					switch tray.App().Alert("Kill process?", fmt.Sprintf("PID %d", pid), "Kill", "Kill -9", "Cancel") {
-					case 0:
-						fmt.Printf("Killing pid %d\n", pid)
-						syscall.Kill(pid, syscall.SIGTERM)
-					case 1:
-						fmt.Printf("Killing -9 pid %d\n", pid)
-						syscall.Kill(pid, syscall.SIGKILL)
-					}
-				}()
-			}
-			if strings.HasPrefix(clicked, "prevent:") {
-				minutes, _ := strconv.Atoi(clicked[8:])
-				fmt.Printf("prevent %d\n", minutes)
-			}
+		go handleClick(clicked)
+	}
+}
+
+func handleClick(clicked string) {
+	switch clicked {
+	case "startup":
+		if runningAtStartup() {
+			removeStartupItem()
+		} else {
+			addStartupItem()
 		}
+	case "prevent_sleep":
+		cancelSleepPrevention()
+	default:
+		if strings.HasPrefix(clicked, "pid:") {
+			pid, _ := strconv.Atoi(clicked[4:])
+			switch tray.App().Alert("Kill process?", fmt.Sprintf("PID %d", pid), "Kill", "Force Kill", "Cancel") {
+			case 0:
+				fmt.Printf("Killing pid %d\n", pid)
+				syscall.Kill(pid, syscall.SIGTERM)
+			case 1:
+				fmt.Printf("Killing -9 pid %d\n", pid)
+				syscall.Kill(pid, syscall.SIGKILL)
+			}
+			return
+		}
+		if strings.HasPrefix(clicked, "prevent:") {
+			minutes, _ := strconv.Atoi(clicked[8:])
+			preventSleep(minutes)
+			return
+		}
+		log.Printf("Other: %s", clicked)
 	}
 }
 
@@ -123,8 +137,8 @@ func main() {
 	trayChannel := make(chan string)
 	assertions.SubscribeAssertionChanges(assertionsChannel)
 	go monitorAssertionChanges(assertionsChannel)
+	setMenuState()
 	app := tray.App()
-	app.SetMenuState(menuState())
 	app.Clicked = trayChannel
 	app.MenuOpened = func() []tray.MenuItem {
 		return menuItems()
