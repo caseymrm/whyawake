@@ -61,17 +61,12 @@ func menuItems() []tray.MenuItem {
 			Children: processes,
 		}}
 	}
-	items = append(items, tray.MenuItem{
+	return append(items, tray.MenuItem{
 		Text:     "Prevent sleep",
 		Children: sleepOptions,
 		Callback: "prevent_sleep",
 		State:    preventingSleep,
 	})
-	startupItem := tray.MenuItem{Text: "Run at start up", Callback: "startup"}
-	if runningAtStartup() {
-		startupItem.State = true
-	}
-	return append(items, startupItem)
 }
 
 func setMenuState() {
@@ -102,12 +97,6 @@ func handleClicks(callback chan string) {
 
 func handleClick(clicked string) {
 	switch clicked {
-	case "startup":
-		if runningAtStartup() {
-			removeStartupItem()
-		} else {
-			addStartupItem()
-		}
 	case "prevent_sleep":
 		cancelSleepPrevention()
 	default:
@@ -139,6 +128,8 @@ func main() {
 	go monitorAssertionChanges(assertionsChannel)
 	setMenuState()
 	app := tray.App()
+	app.Name = "Can't Sleep"
+	app.Label = "com.github.caseymrm.CantSleep"
 	app.Clicked = trayChannel
 	app.MenuOpened = func() []tray.MenuItem {
 		return menuItems()
