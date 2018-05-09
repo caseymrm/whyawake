@@ -128,8 +128,8 @@ func main() {
 	go monitorAssertionChanges(assertionsChannel)
 	setMenuState()
 	app := tray.App()
-	app.Name = "Can't Sleep"
-	app.Label = "com.github.caseymrm.CantSleep"
+	app.Name = "Why Awake?"
+	app.Label = "com.github.caseymrm.whyawake"
 	app.Clicked = trayChannel
 	app.MenuOpened = func() []tray.MenuItem {
 		return menuItems()

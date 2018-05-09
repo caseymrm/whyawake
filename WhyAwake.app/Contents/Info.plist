@@ -3,15 +3,15 @@
 <plist version="1.0">
 <dict>
   <key>CFBundleExecutable</key>
-  <string>cantsleep</string>
+  <string>whyawake</string>
   <key>CFBundleIconFile</key>
   <string>icon</string>
   <key>CFBundleGetInfoString</key>
-  <string>CantSleep</string>
+  <string>WhyAwake</string>
   <key>CFBundleIdentifier</key>
-  <string>cantsleep.go-statusbar.caseymrmr.github.com</string>
+  <string>whyawake.caseymrm.github.com</string>
   <key>CFBundleName</key>
-  <string>CantSleep</string>
+  <string>WhyAwake</string>
   <key>CFBundleShortVersionString</key>
   <string>0.1</string>
   <key>CFBundleInfoDictionaryVersion</key>
