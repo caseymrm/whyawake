@@ -147,17 +147,17 @@ func handleClick(clicked string) {
 
 func main() {
 	assertionsChannel := make(chan assertions.AssertionChange)
-	menuetChannel := make(chan string)
+	clickChannel := make(chan string)
 	assertions.SubscribeAssertionChanges(assertionsChannel)
 	go monitorAssertionChanges(assertionsChannel)
 	setMenuState()
 	app := menuet.App()
 	app.Name = "Why Awake?"
 	app.Label = "com.github.caseymrm.whyawake"
-	app.Clicked = menuetChannel
+	app.Clicked = clickChannel
 	app.MenuOpened = func() []menuet.MenuItem {
 		return menuItems()
 	}
-	go handleClicks(menuetChannel)
+	go handleClicks(clickChannel)
 	app.RunApplication()
 }
