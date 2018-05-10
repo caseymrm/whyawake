@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	"github.com/caseymrm/go-assertions"
-	"github.com/caseymrm/menuet/tray"
+	"github.com/caseymrm/menuet"
 )
 
 var sleepKeywords = map[string]bool{
@@ -30,23 +30,23 @@ func canSleep() bool {
 	return true
 }
 
-func menuItems() []tray.MenuItem {
-	items := make([]tray.MenuItem, 0)
+func menuItems() []menuet.MenuItem {
+	items := make([]menuet.MenuItem, 0)
 
 	if preventingSleep() {
-		items = append(items, tray.MenuItem{
+		items = append(items, menuet.MenuItem{
 			Text:     preventionRemaining(),
 			FontSize: 12,
 		})
-		items = append(items, tray.MenuItem{
+		items = append(items, menuet.MenuItem{
 			Text:     "Deactivate",
 			Callback: "deactivate",
-		}, tray.MenuItem{
+		}, menuet.MenuItem{
 			Text: "---",
 		})
 	}
 
-	processes := make([]tray.MenuItem, 0)
+	processes := make([]menuet.MenuItem, 0)
 	pidAsserts := assertions.GetPIDAssertions()
 	for key := range sleepKeywords {
 		pids := pidAsserts[key]
@@ -54,7 +54,7 @@ func menuItems() []tray.MenuItem {
 			if pid.PID == cafPID {
 				continue
 			}
-			processes = append(processes, tray.MenuItem{
+			processes = append(processes, menuet.MenuItem{
 				Text:     pid.Name,
 				Callback: fmt.Sprintf("pid:%d", pid.PID),
 			})
@@ -65,21 +65,21 @@ func menuItems() []tray.MenuItem {
 		if len(processes) > 1 {
 			text = fmt.Sprintf("%d processes keeping your Mac awake", len(processes))
 		}
-		items = append(items, tray.MenuItem{
+		items = append(items, menuet.MenuItem{
 			Text:     text,
 			FontSize: 12,
 		})
 		items = append(items, processes...)
 	} else if !preventingSleep() {
-		items = append(items, tray.MenuItem{
+		items = append(items, menuet.MenuItem{
 			Text: "Your Mac can sleep",
 		})
 	}
 
-	items = append(items, tray.MenuItem{
+	items = append(items, menuet.MenuItem{
 		Text: "---",
 	})
-	items = append(items, tray.MenuItem{
+	items = append(items, menuet.MenuItem{
 		Text:     "Keep this Mac awake",
 		FontSize: 12,
 	})
@@ -99,7 +99,7 @@ func setMenuState() {
 	if preventingSleep() {
 		image = "Awake Eye.pdf"
 	}
-	tray.App().SetMenuState(&tray.MenuState{
+	menuet.App().SetMenuState(&menuet.MenuState{
 		Image: image,
 		Items: menuItems(),
 	})
@@ -126,7 +126,7 @@ func handleClick(clicked string) {
 	default:
 		if strings.HasPrefix(clicked, "pid:") {
 			pid, _ := strconv.Atoi(clicked[4:])
-			switch tray.App().Alert("Kill process?", fmt.Sprintf("PID %d", pid), "Kill", "Force Kill", "Cancel") {
+			switch menuet.App().Alert("Kill process?", fmt.Sprintf("PID %d", pid), "Kill", "Force Kill", "Cancel") {
 			case 0:
 				fmt.Printf("Killing pid %d\n", pid)
 				syscall.Kill(pid, syscall.SIGTERM)
@@ -147,17 +147,17 @@ func handleClick(clicked string) {
 
 func main() {
 	assertionsChannel := make(chan assertions.AssertionChange)
-	trayChannel := make(chan string)
+	menuetChannel := make(chan string)
 	assertions.SubscribeAssertionChanges(assertionsChannel)
 	go monitorAssertionChanges(assertionsChannel)
 	setMenuState()
-	app := tray.App()
+	app := menuet.App()
 	app.Name = "Why Awake?"
 	app.Label = "com.github.caseymrm.whyawake"
-	app.Clicked = trayChannel
-	app.MenuOpened = func() []tray.MenuItem {
+	app.Clicked = menuetChannel
+	app.MenuOpened = func() []menuet.MenuItem {
 		return menuItems()
 	}
-	go handleClicks(trayChannel)
+	go handleClicks(menuetChannel)
 	app.RunApplication()
 }

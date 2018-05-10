@@ -9,10 +9,10 @@ import (
 	"time"
 
 	"github.com/caseymrm/go-caffeinate"
-	"github.com/caseymrm/menuet/tray"
+	"github.com/caseymrm/menuet"
 )
 
-var sleepOptions = []tray.MenuItem{
+var sleepOptions = []menuet.MenuItem{
 	{Text: "Indefinitely", Callback: "prevent:0"},
 	//{Text: "1 min test", Callback: "prevent:1"},
 	{Text: "10 minutes", Callback: "prevent:10"},
@@ -73,7 +73,7 @@ func preventingSleep() bool {
 	return cafPID != 0
 }
 
-func sleepOptionSelected(item tray.MenuItem) bool {
+func sleepOptionSelected(item menuet.MenuItem) bool {
 	if cafPID == 0 {
 		return false
 	}
