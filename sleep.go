@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/caseymrm/go-caffeinate"
-	"github.com/caseymrm/go-statusbar/tray"
+	"github.com/caseymrm/menuet/tray"
 )
 
 var sleepOptions = []tray.MenuItem{

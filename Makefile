@@ -1,6 +1,6 @@
 BINARY=WhyAwake.app/Contents/MacOS/whyawake
 SOURCEDIR=.
-LIBDIR=../go-statusbar/tray ../go-assertions ../go-caffeinate
+LIBDIR=../menuet/tray ../go-assertions ../go-caffeinate
 SOURCES := $(shell find $(SOURCEDIR) $(LIBDIR) -name '*.go' -o -name '*.m' -o -name '*.h' -o -name '*.c') Makefile
 
 run: $(BINARY)

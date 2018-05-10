@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	"github.com/caseymrm/go-assertions"
-	"github.com/caseymrm/go-statusbar/tray"
+	"github.com/caseymrm/menuet/tray"
 )
 
 var sleepKeywords = map[string]bool{
