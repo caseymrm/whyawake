@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"sync"
@@ -29,7 +28,6 @@ var cafExpire time.Time
 var cafMinutes int
 
 func preventSleep(minutes int) {
-	log.Printf("PreventSleep %d", minutes)
 	cafOnce.Do(func() {
 		caf = caffeinate.Caffeinate{
 			Display:    true,
@@ -38,9 +36,7 @@ func preventSleep(minutes int) {
 		}
 	})
 	caf.Timeout = 60 * minutes
-	log.Printf("Starting")
 	caf.Start()
-	log.Printf("Done starting")
 	cafMinutes = minutes
 	if minutes > 0 {
 		cafExpire = time.Now().Add(time.Duration(minutes) * time.Minute)
@@ -56,9 +52,7 @@ func preventSleep(minutes int) {
 			}
 		}()
 	}
-	log.Printf("Waiting... %d", cafPID)
 	caf.Wait()
-	log.Printf("Done caffeinating... %d", cafPID)
 	ticker.Stop()
 	cafPID = 0
 	cafExpire = time.Time{}
