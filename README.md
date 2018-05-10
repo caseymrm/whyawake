@@ -1,6 +1,14 @@
 # Why Awake?
 An OSX menu bar app to let you know when an application is keeping your computer from sleeping, and force it to not sleep for a period.
 
+## Install
+
+* [Download the app](https://github.com/caseymrm/whyawake/releases/download/v0.1/WhyAwake.app.zip)
+* Unzip it
+* Put it in Applications
+* Run it
+* To run every time you login, select "start at login" from the menu bar
+
 ## Screenshots
 
 ### Your Mac can sleep normally
