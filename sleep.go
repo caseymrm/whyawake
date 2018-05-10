@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -13,14 +14,11 @@ import (
 
 var sleepOptions = []tray.MenuItem{
 	{Text: "Indefinitely", Callback: "prevent:0"},
-	{Text: "1 min testing", Callback: "prevent:1"},
-	{Text: "5 minutes", Callback: "prevent:5"},
+	//{Text: "1 min test", Callback: "prevent:1"},
 	{Text: "10 minutes", Callback: "prevent:10"},
-	{Text: "15 minutes", Callback: "prevent:15"},
 	{Text: "30 minutes", Callback: "prevent:30"},
 	{Text: "1 hour", Callback: "prevent:60"},
-	{Text: "2 hours", Callback: "prevent:120"},
-	{Text: "5 hours", Callback: "prevent:300"},
+	{Text: "3 hours", Callback: "prevent:180"},
 }
 
 var caf caffeinate.Caffeinate
@@ -51,11 +49,13 @@ func preventSleep(minutes int) {
 	}
 	cafPID = caf.CaffeinatePID()
 	ticker := time.NewTicker(500 * time.Millisecond)
-	go func() {
-		for range ticker.C {
-			setMenuState()
-		}
-	}()
+	if cafMinutes > 0 {
+		go func() {
+			for range ticker.C {
+				setMenuState()
+			}
+		}()
+	}
 	log.Printf("Waiting... %d", cafPID)
 	caf.Wait()
 	log.Printf("Done caffeinating... %d", cafPID)
@@ -69,16 +69,24 @@ func cancelSleepPrevention() {
 	caf.Stop()
 }
 
-func preventionRemaining() string {
+func preventingSleep() bool {
+	return cafPID != 0
+}
+
+func sleepOptionSelected(item tray.MenuItem) bool {
 	if cafPID == 0 {
-		return ""
+		return false
 	}
+	return strings.HasSuffix(item.Callback, fmt.Sprintf(":%d", cafMinutes))
+}
+
+func preventionRemaining() string {
 	if cafMinutes == 0 {
-		return "∞️"
+		return "Staying awake indefinitely"
 	}
 	remaining := int(time.Until(cafExpire).Seconds())
 	if remaining > 60 {
-		return fmt.Sprintf("%dm", remaining/60)
+		return fmt.Sprintf("%d minutes remaining", remaining/60)
 	}
-	return fmt.Sprintf("%ds", remaining)
+	return fmt.Sprintf("%d seconds remaining", remaining)
 }

@@ -16,8 +16,9 @@ var sleepKeywords = map[string]bool{
 	//"PreventUserIdleSystemSleep":  true,
 	"NoDisplaySleepAssertion": true,
 }
-var canSleepTitle = "😴"
-var cantSleepTitle = "😫"
+var canSleepTitle = "💤"
+var cantSleepTitle = "😳"
+var caffeinatedTitle = "🤪"
 
 func canSleep() bool {
 	asserts := assertions.GetAssertions()
@@ -30,18 +31,27 @@ func canSleep() bool {
 }
 
 func menuItems() []tray.MenuItem {
+	items := make([]tray.MenuItem, 0)
+
+	if preventingSleep() {
+		items = append(items, tray.MenuItem{
+			Text:     preventionRemaining(),
+			FontSize: 12,
+		})
+		items = append(items, tray.MenuItem{
+			Text:     "Deactivate",
+			Callback: "deactivate",
+		}, tray.MenuItem{
+			Text: "---",
+		})
+	}
+
 	processes := make([]tray.MenuItem, 0)
 	pidAsserts := assertions.GetPIDAssertions()
-	preventingSleep := false
 	for key := range sleepKeywords {
 		pids := pidAsserts[key]
 		for _, pid := range pids {
 			if pid.PID == cafPID {
-				preventingSleep = true
-				processes = append(processes, tray.MenuItem{
-					Text:     "You have prevented sleep for " + preventionRemaining() + " longer",
-					Callback: fmt.Sprintf("pid:%d", pid.PID),
-				})
 				continue
 			}
 			processes = append(processes, tray.MenuItem{
@@ -50,33 +60,47 @@ func menuItems() []tray.MenuItem {
 			})
 		}
 	}
-	items := []tray.MenuItem{{Text: "Your laptop can sleep!"}}
 	if len(processes) > 0 {
-		text := "1 process is keeping your laptop awake"
+		text := "1 process keeping your Mac awake"
 		if len(processes) > 1 {
-			text = fmt.Sprintf("%d processes are keeping your laptop awake", len(processes))
+			text = fmt.Sprintf("%d processes keeping your Mac awake", len(processes))
 		}
-		items = []tray.MenuItem{{
+		items = append(items, tray.MenuItem{
 			Text:     text,
-			Children: processes,
-		}}
+			FontSize: 12,
+		})
+		items = append(items, processes...)
+	} else if !preventingSleep() {
+		items = append(items, tray.MenuItem{
+			Text: "Your Mac can sleep",
+		})
 	}
-	return append(items, tray.MenuItem{
-		Text:     "Prevent sleep",
-		Children: sleepOptions,
-		Callback: "prevent_sleep",
-		State:    preventingSleep,
+
+	items = append(items, tray.MenuItem{
+		Text: "---",
 	})
+	items = append(items, tray.MenuItem{
+		Text:     "Keep this Mac awake",
+		FontSize: 12,
+	})
+	for _, option := range sleepOptions {
+		option.State = sleepOptionSelected(option)
+		items = append(items, option)
+	}
+
+	return items
 }
 
 func setMenuState() {
-	title := cantSleepTitle
+	image := "Red Eye.pdf"
 	if canSleep() {
-		title = canSleepTitle
+		image = "Eye.pdf"
 	}
-	title += preventionRemaining()
+	if preventingSleep() {
+		image = "Awake Eye.pdf"
+	}
 	tray.App().SetMenuState(&tray.MenuState{
-		Title: title,
+		Image: image,
 		Items: menuItems(),
 	})
 }
@@ -97,7 +121,7 @@ func handleClicks(callback chan string) {
 
 func handleClick(clicked string) {
 	switch clicked {
-	case "prevent_sleep":
+	case "deactivate":
 		cancelSleepPrevention()
 	default:
 		if strings.HasPrefix(clicked, "pid:") {
