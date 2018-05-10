@@ -1,11 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
+	"os/exec"
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/caseymrm/go-assertions"
 	"github.com/caseymrm/menuet"
@@ -145,6 +149,43 @@ func handleClick(clicked string) {
 	}
 }
 
+func checkUpdates() {
+	url := "https://api.github.com/repos/caseymrm/whyawake/releases"
+	version := "v0.3"
+	ticker := time.NewTicker(24 * time.Hour)
+	for ; true; <-ticker.C {
+		resp, err := http.Get(url)
+		if err != nil {
+			log.Printf("Could not check for updates: %v", err)
+			return
+		}
+		type Release struct {
+			TagName string `json:"tag_name"`
+		}
+		releases := make([]Release, 0)
+		dec := json.NewDecoder(resp.Body)
+		err = dec.Decode(&releases)
+		if err != nil {
+			log.Printf("Could not check for updates: %v", err)
+			return
+		}
+		if len(releases) == 0 {
+			log.Printf("Could not check for updates: no releases found")
+			return
+		}
+		if releases[0].TagName != version {
+			button := menuet.App().Alert(
+				"New version of Why Awake? available",
+				fmt.Sprintf("Looks like %s of Why Awake? is now available- you're running %s", releases[0].TagName, version),
+				"Visit download page", "Remind me later")
+			if button == 0 {
+				exec.Command("open", "https://github.com/caseymrm/whyawake/releases").Start()
+			}
+
+		}
+	}
+}
+
 func main() {
 	assertionsChannel := make(chan assertions.AssertionChange)
 	clickChannel := make(chan string)
@@ -159,5 +200,6 @@ func main() {
 		return menuItems()
 	}
 	go handleClicks(clickChannel)
+	go checkUpdates()
 	app.RunApplication()
 }
