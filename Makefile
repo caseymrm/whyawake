@@ -10,5 +10,8 @@ $(BINARY): $(SOURCES)
 	@echo $(SOURCES)
 	go build -o $(BINARY)
 
+sign: $(BINARY)
+	codesign -f -s "Developer ID Application: Rational Creation LLC (AP2AEA9WAW)" WhyAwake.app --deep
+
 clean:
 	rm -f $(BINARY)
