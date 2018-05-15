@@ -17,8 +17,10 @@ import (
 
 var sleepKeywords = map[string]bool{
 	"PreventUserIdleDisplaySleep": true,
-	//"PreventUserIdleSystemSleep":  true,
-	"NoDisplaySleepAssertion": true,
+	"NoDisplaySleepAssertion":     true,
+}
+var otherChangeKeywords = map[string]bool{
+	"PreventUserIdleSystemSleep": true,
 }
 var canSleepTitle = "💤"
 var cantSleepTitle = "😳"
@@ -111,7 +113,7 @@ func setMenuState() {
 
 func monitorAssertionChanges(channel chan assertions.AssertionChange) {
 	for change := range channel {
-		if sleepKeywords[change.Type] {
+		if sleepKeywords[change.Type] || otherChangeKeywords[change.Type] {
 			setMenuState()
 		}
 	}
