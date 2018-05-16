@@ -153,7 +153,7 @@ func handleClick(clicked string) {
 
 func checkUpdates() {
 	url := "https://api.github.com/repos/caseymrm/whyawake/releases"
-	version := "v0.3"
+	version := "v0.4"
 	ticker := time.NewTicker(24 * time.Hour)
 	for ; true; <-ticker.C {
 		resp, err := http.Get(url)
