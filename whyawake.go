@@ -48,7 +48,7 @@ func menuItems() []menuet.MenuItem {
 			Text:     "Deactivate",
 			Callback: "deactivate",
 		}, menuet.MenuItem{
-			Text: "---",
+			Type: menuet.Separator,
 		})
 	}
 
@@ -83,7 +83,7 @@ func menuItems() []menuet.MenuItem {
 	}
 
 	items = append(items, menuet.MenuItem{
-		Text: "---",
+		Type: menuet.Separator,
 	})
 	items = append(items, menuet.MenuItem{
 		Text:     "Keep this Mac awake",
