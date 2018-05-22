@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/caseymrm/go-assertions"
+	"github.com/caseymrm/go-pmset"
 	"github.com/caseymrm/menuet"
 )
 
@@ -27,7 +27,7 @@ var cantSleepTitle = "😳"
 var caffeinatedTitle = "🤪"
 
 func canSleep() bool {
-	asserts := assertions.GetAssertions()
+	asserts := pmset.GetAssertions()
 	for key, val := range asserts {
 		if val == 1 && sleepKeywords[key] {
 			return false
@@ -53,7 +53,7 @@ func menuItems() []menuet.MenuItem {
 	}
 
 	processes := make([]menuet.MenuItem, 0)
-	pidAsserts := assertions.GetPIDAssertions()
+	pidAsserts := pmset.GetPIDAssertions()
 	for key := range sleepKeywords {
 		pids := pidAsserts[key]
 		for _, pid := range pids {
@@ -111,7 +111,7 @@ func setMenuState() {
 	})
 }
 
-func monitorAssertionChanges(channel chan assertions.AssertionChange) {
+func monitorAssertionChanges(channel chan pmset.AssertionChange) {
 	for change := range channel {
 		if sleepKeywords[change.Type] || otherChangeKeywords[change.Type] {
 			setMenuState()
@@ -189,9 +189,9 @@ func checkUpdates() {
 }
 
 func main() {
-	assertionsChannel := make(chan assertions.AssertionChange)
+	assertionsChannel := make(chan pmset.AssertionChange)
 	clickChannel := make(chan string)
-	assertions.SubscribeAssertionChanges(assertionsChannel)
+	pmset.SubscribeAssertionChanges(assertionsChannel)
 	go monitorAssertionChanges(assertionsChannel)
 	setMenuState()
 	app := menuet.App()

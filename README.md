@@ -26,7 +26,7 @@ An OSX menu bar app to let you know when an application is keeping your computer
 ## Built with
 
 * [Menuet](https://github.com/caseymrm/menuet) - build menu bar apps in Go
-* [go-assertions](https://github.com/caseymrm/go-assertions) - detect when your Mac can sleep
+* [go-pmset](https://github.com/caseymrm/go-pmset) - detect when your Mac can sleep
 * [go-caffeinate](https://github.com/caseymrm/go-caffeinate) - keep your Mac from sleeping
 
 ## License

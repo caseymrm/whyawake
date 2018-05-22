@@ -57,6 +57,7 @@ func preventSleep(minutes int) {
 	cafPID = 0
 	cafExpire = time.Time{}
 	setMenuState()
+	menuet.App().Notification("Location changed", "Did you move?", "Now showing weather")
 }
 
 func cancelSleepPrevention() {
