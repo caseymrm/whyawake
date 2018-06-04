@@ -43,21 +43,21 @@ func preventSleep(minutes int) {
 	} else {
 		cafExpire = time.Time{}
 	}
-	cafPID = caf.CaffeinatePID()
-	ticker := time.NewTicker(500 * time.Millisecond)
-	if cafMinutes > 0 {
-		go func() {
-			for range ticker.C {
-				setMenuState()
-			}
-		}()
+	if cafPID == 0 {
+		menuet.App().Notification(menuet.Notification{
+			Title:    "Preventing sleep",
+			Subtitle: fmt.Sprintf("Your computer will not sleep for %d minutes", minutes),
+			Message:  "Deactivate in the Why Awake? menu",
+		})
 	}
+	cafPID = caf.CaffeinatePID()
 	caf.Wait()
-	ticker.Stop()
 	cafPID = 0
 	cafExpire = time.Time{}
 	setMenuState()
-	menuet.App().Notification("Location changed", "Did you move?", "Now showing weather")
+	menuet.App().Notification(menuet.Notification{
+		Title: "Your computer can sleep again",
+	})
 }
 
 func cancelSleepPrevention() {

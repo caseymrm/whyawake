@@ -132,7 +132,11 @@ func handleClick(clicked string) {
 	default:
 		if strings.HasPrefix(clicked, "pid:") {
 			pid, _ := strconv.Atoi(clicked[4:])
-			switch menuet.App().Alert("Kill process?", fmt.Sprintf("PID %d", pid), "Kill", "Force Kill", "Cancel") {
+			switch menuet.App().Alert(menuet.Alert{
+				MessageText:     "Kill process?",
+				InformativeText: fmt.Sprintf("PID %d", pid),
+				Buttons:         []string{"Kill", "Force Kill", "Cancel"},
+			}) {
 			case 0:
 				fmt.Printf("Killing pid %d\n", pid)
 				syscall.Kill(pid, syscall.SIGTERM)
@@ -176,10 +180,11 @@ func checkUpdates() {
 			return
 		}
 		if releases[0].TagName != version {
-			button := menuet.App().Alert(
-				"New version of Why Awake? available",
-				fmt.Sprintf("Looks like %s of Why Awake? is now available- you're running %s", releases[0].TagName, version),
-				"Visit download page", "Remind me later")
+			button := menuet.App().Alert(menuet.Alert{
+				MessageText:     "New version of Why Awake? available",
+				InformativeText: fmt.Sprintf("Looks like %s of Why Awake? is now available- you're running %s", releases[0].TagName, version),
+				Buttons:         []string{"Visit download page", "Remind me later"},
+			})
 			if button == 0 {
 				exec.Command("open", "https://github.com/caseymrm/whyawake/releases").Start()
 			}
