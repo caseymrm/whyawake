@@ -153,7 +153,7 @@ func handleClick(clicked string) {
 }
 
 func checkUpdates() {
-	version := "v0.4"
+	version := "v0.5"
 	ticker := time.NewTicker(24 * time.Hour)
 	for ; true; <-ticker.C {
 		release := menuet.CheckForNewRelease("caseymrm/whyawake", version)
