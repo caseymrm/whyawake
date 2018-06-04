@@ -56,7 +56,9 @@ func preventSleep(minutes int) {
 	cafExpire = time.Time{}
 	setMenuState()
 	menuet.App().Notification(menuet.Notification{
-		Title: "Your computer can sleep again",
+		Title:    "Your computer can sleep again",
+		Subtitle: fmt.Sprintf("It was kept awake for %d minutes", minutes),
+		Message:  "Keep preventing sleep in the Why Awake? menu",
 	})
 }
 
