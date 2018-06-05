@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/caseymrm/go-pmset"
 	"github.com/caseymrm/menuet"
@@ -152,30 +151,7 @@ func handleClick(clicked string) {
 	}
 }
 
-func checkUpdates() {
-	version := "v0.5"
-	ticker := time.NewTicker(24 * time.Hour)
-	for ; true; <-ticker.C {
-		release := menuet.CheckForNewRelease("caseymrm/whyawake", version)
-		if release == nil {
-			continue
-		}
-		button := menuet.App().Alert(menuet.Alert{
-			MessageText:     "New version of Why Awake? available",
-			InformativeText: fmt.Sprintf("Looks like %s of Why Awake? is now available- you're running %s", release.TagName, version),
-			Buttons:         []string{"Update now", "Remind me later"},
-		})
-		if button == 0 {
-			err := menuet.UpdateApp(release)
-			if err != nil {
-				log.Printf("Unable to update app: %v", err)
-			}
-		}
-	}
-}
-
 func main() {
-	menuet.CheckForRestart()
 	assertionsChannel := make(chan pmset.AssertionChange)
 	clickChannel := make(chan string)
 	pmset.SubscribeAssertionChanges(assertionsChannel)
@@ -188,7 +164,8 @@ func main() {
 	app.MenuOpened = func() []menuet.MenuItem {
 		return menuItems()
 	}
+	app.AutoUpdate.Version = "v0.5"
+	app.AutoUpdate.Repo = "caseymrm/whyawake"
 	go handleClicks(clickChannel)
-	go checkUpdates()
 	app.RunApplication()
 }
