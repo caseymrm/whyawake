@@ -128,11 +128,12 @@ func handleClick(clicked string) {
 	default:
 		if strings.HasPrefix(clicked, "pid:") {
 			pid, _ := strconv.Atoi(clicked[4:])
-			switch menuet.App().Alert(menuet.Alert{
+			response := menuet.App().Alert(menuet.Alert{
 				MessageText:     "Kill process?",
 				InformativeText: fmt.Sprintf("PID %d", pid),
 				Buttons:         []string{"Kill", "Force Kill", "Cancel"},
-			}) {
+			})
+			switch response.Button {
 			case 0:
 				fmt.Printf("Killing pid %d\n", pid)
 				syscall.Kill(pid, syscall.SIGTERM)
