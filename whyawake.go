@@ -115,12 +115,6 @@ func monitorAssertionChanges(channel chan pmset.AssertionChange) {
 	}
 }
 
-func handleClicks(callback chan string) {
-	for clicked := range callback {
-		go handleClick(clicked)
-	}
-}
-
 func handleClick(clicked string) {
 	switch clicked {
 	case "deactivate":
@@ -154,19 +148,17 @@ func handleClick(clicked string) {
 
 func main() {
 	assertionsChannel := make(chan pmset.AssertionChange)
-	clickChannel := make(chan string)
 	pmset.SubscribeAssertionChanges(assertionsChannel)
 	go monitorAssertionChanges(assertionsChannel)
 	setMenuState()
 	app := menuet.App()
 	app.Name = "Why Awake?"
 	app.Label = "com.github.caseymrm.whyawake"
-	app.Clicked = clickChannel
+	app.Clicked = handleClick
 	app.MenuOpened = func() []menuet.MenuItem {
 		return menuItems()
 	}
 	app.AutoUpdate.Version = "v0.5"
 	app.AutoUpdate.Repo = "caseymrm/whyawake"
-	go handleClicks(clickChannel)
 	app.RunApplication()
 }
