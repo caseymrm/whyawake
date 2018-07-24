@@ -32,7 +32,7 @@ func canSleep() bool {
 	return true
 }
 
-func menuItems() []menuet.MenuItem {
+func menuItems(key string) []menuet.MenuItem {
 	items := make([]menuet.MenuItem, 0)
 
 	if preventingSleep() {
@@ -41,8 +41,8 @@ func menuItems() []menuet.MenuItem {
 			FontSize: 12,
 		})
 		items = append(items, menuet.MenuItem{
-			Text:     "Deactivate",
-			Callback: "deactivate",
+			Text: "Deactivate",
+			Key:  "deactivate",
 		}, menuet.MenuItem{
 			Type: menuet.Separator,
 		})
@@ -57,8 +57,8 @@ func menuItems() []menuet.MenuItem {
 				continue
 			}
 			processes = append(processes, menuet.MenuItem{
-				Text:     pid.Name,
-				Callback: fmt.Sprintf("pid:%d", pid.PID),
+				Text: pid.Name,
+				Key:  fmt.Sprintf("pid:%d", pid.PID),
 			})
 		}
 	}
@@ -103,8 +103,8 @@ func setMenuState() {
 	}
 	menuet.App().SetMenuState(&menuet.MenuState{
 		Image: image,
-		Items: menuItems(),
 	})
+	menuet.App().MenuChanged()
 }
 
 func monitorAssertionChanges(channel chan pmset.AssertionChange) {
@@ -155,9 +155,7 @@ func main() {
 	app.Name = "Why Awake?"
 	app.Label = "com.github.caseymrm.whyawake"
 	app.Clicked = handleClick
-	app.MenuOpened = func() []menuet.MenuItem {
-		return menuItems()
-	}
+	app.MenuOpened = menuItems
 	app.AutoUpdate.Version = "v0.5"
 	app.AutoUpdate.Repo = "caseymrm/whyawake"
 	app.RunApplication()

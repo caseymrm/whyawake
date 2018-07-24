@@ -12,12 +12,12 @@ import (
 )
 
 var sleepOptions = []menuet.MenuItem{
-	{Text: "Indefinitely", Callback: "prevent:0"},
-	//{Text: "1 min test", Callback: "prevent:1"},
-	{Text: "10 minutes", Callback: "prevent:10"},
-	{Text: "30 minutes", Callback: "prevent:30"},
-	{Text: "1 hour", Callback: "prevent:60"},
-	{Text: "3 hours", Callback: "prevent:180"},
+	{Text: "Indefinitely", Key: "prevent:0"},
+	//{Text: "1 min test", Key: "prevent:1"},
+	{Text: "10 minutes", Key: "prevent:10"},
+	{Text: "30 minutes", Key: "prevent:30"},
+	{Text: "1 hour", Key: "prevent:60"},
+	{Text: "3 hours", Key: "prevent:180"},
 }
 
 var caf caffeinate.Caffeinate
@@ -74,7 +74,7 @@ func sleepOptionSelected(item menuet.MenuItem) bool {
 	if cafPID == 0 {
 		return false
 	}
-	return strings.HasSuffix(item.Callback, fmt.Sprintf(":%d", cafMinutes))
+	return strings.HasSuffix(item.Key, fmt.Sprintf(":%d", cafMinutes))
 }
 
 func preventionRemaining() string {
