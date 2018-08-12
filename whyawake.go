@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"strconv"
-	"strings"
 	"syscall"
 
 	"github.com/caseymrm/go-pmset"
@@ -32,7 +29,7 @@ func canSleep() bool {
 	return true
 }
 
-func menuItems(key string) []menuet.MenuItem {
+func menuItems(item menuet.MenuItem) []menuet.MenuItem {
 	items := make([]menuet.MenuItem, 0)
 
 	if preventingSleep() {
@@ -41,8 +38,8 @@ func menuItems(key string) []menuet.MenuItem {
 			FontSize: 12,
 		})
 		items = append(items, menuet.MenuItem{
-			Text: "Deactivate",
-			Key:  "deactivate",
+			Text:    "Deactivate",
+			Clicked: cancelSleepPrevention,
 		}, menuet.MenuItem{
 			Type: menuet.Separator,
 		})
@@ -58,7 +55,9 @@ func menuItems(key string) []menuet.MenuItem {
 			}
 			processes = append(processes, menuet.MenuItem{
 				Text: pid.Name,
-				Key:  fmt.Sprintf("pid:%d", pid.PID),
+				Clicked: func() {
+					killProcess(pid.PID)
+				},
 			})
 		}
 	}
@@ -85,10 +84,7 @@ func menuItems(key string) []menuet.MenuItem {
 		Text:     "Keep this Mac awake",
 		FontSize: 12,
 	})
-	for _, option := range sleepOptions {
-		option.State = sleepOptionSelected(option)
-		items = append(items, option)
-	}
+	items = append(items, sleepOptions()...)
 
 	return items
 }
@@ -115,34 +111,19 @@ func monitorAssertionChanges(channel chan pmset.AssertionChange) {
 	}
 }
 
-func handleClick(clicked string) {
-	switch clicked {
-	case "deactivate":
-		cancelSleepPrevention()
-	default:
-		if strings.HasPrefix(clicked, "pid:") {
-			pid, _ := strconv.Atoi(clicked[4:])
-			response := menuet.App().Alert(menuet.Alert{
-				MessageText:     "Kill process?",
-				InformativeText: fmt.Sprintf("PID %d", pid),
-				Buttons:         []string{"Kill", "Force Kill", "Cancel"},
-			})
-			switch response.Button {
-			case 0:
-				fmt.Printf("Killing pid %d\n", pid)
-				syscall.Kill(pid, syscall.SIGTERM)
-			case 1:
-				fmt.Printf("Killing -9 pid %d\n", pid)
-				syscall.Kill(pid, syscall.SIGKILL)
-			}
-			return
-		}
-		if strings.HasPrefix(clicked, "prevent:") {
-			minutes, _ := strconv.Atoi(clicked[8:])
-			preventSleep(minutes)
-			return
-		}
-		log.Printf("Other: %s", clicked)
+func killProcess(pid int) {
+	response := menuet.App().Alert(menuet.Alert{
+		MessageText:     "Kill process?",
+		InformativeText: fmt.Sprintf("PID %d", pid),
+		Buttons:         []string{"Kill", "Force Kill", "Cancel"},
+	})
+	switch response.Button {
+	case 0:
+		fmt.Printf("Killing pid %d\n", pid)
+		syscall.Kill(pid, syscall.SIGTERM)
+	case 1:
+		fmt.Printf("Killing -9 pid %d\n", pid)
+		syscall.Kill(pid, syscall.SIGKILL)
 	}
 }
 
@@ -154,8 +135,7 @@ func main() {
 	app := menuet.App()
 	app.Name = "Why Awake?"
 	app.Label = "com.github.caseymrm.whyawake"
-	app.Clicked = handleClick
-	app.MenuOpened = menuItems
+	app.Children = menuItems
 	app.AutoUpdate.Version = "v0.5"
 	app.AutoUpdate.Repo = "caseymrm/whyawake"
 	app.RunApplication()

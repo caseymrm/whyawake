@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
@@ -11,13 +10,15 @@ import (
 	"github.com/caseymrm/menuet"
 )
 
-var sleepOptions = []menuet.MenuItem{
-	{Text: "Indefinitely", Key: "prevent:0"},
-	//{Text: "1 min test", Key: "prevent:1"},
-	{Text: "10 minutes", Key: "prevent:10"},
-	{Text: "30 minutes", Key: "prevent:30"},
-	{Text: "1 hour", Key: "prevent:60"},
-	{Text: "3 hours", Key: "prevent:180"},
+func sleepOptions() []menuet.MenuItem {
+	return []menuet.MenuItem{
+		{Text: "Indefinitely", Clicked: func() { preventSleep(0) }, State: cafMinutes == 0},
+		//{Text: "1 min (testing)", Clicked: func() {preventSleep(1) }, State: cafMinutes == 1},
+		{Text: "10 minutes", Clicked: func() { preventSleep(10) }, State: cafMinutes == 10},
+		{Text: "30 minutes", Clicked: func() { preventSleep(30) }, State: cafMinutes == 30},
+		{Text: "1 hour", Clicked: func() { preventSleep(60) }, State: cafMinutes == 60},
+		{Text: "3 hours", Clicked: func() { preventSleep(180) }, State: cafMinutes == 180},
+	}
 }
 
 var caf caffeinate.Caffeinate
@@ -68,13 +69,6 @@ func cancelSleepPrevention() {
 
 func preventingSleep() bool {
 	return cafPID != 0
-}
-
-func sleepOptionSelected(item menuet.MenuItem) bool {
-	if cafPID == 0 {
-		return false
-	}
-	return strings.HasSuffix(item.Key, fmt.Sprintf(":%d", cafMinutes))
 }
 
 func preventionRemaining() string {
