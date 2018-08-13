@@ -12,12 +12,12 @@ import (
 
 func sleepOptions() []menuet.MenuItem {
 	return []menuet.MenuItem{
-		{Text: "Indefinitely", Clicked: func() { preventSleep(0) }, State: cafMinutes == 0},
-		//{Text: "1 min (testing)", Clicked: func() {preventSleep(1) }, State: cafMinutes == 1},
-		{Text: "10 minutes", Clicked: func() { preventSleep(10) }, State: cafMinutes == 10},
-		{Text: "30 minutes", Clicked: func() { preventSleep(30) }, State: cafMinutes == 30},
-		{Text: "1 hour", Clicked: func() { preventSleep(60) }, State: cafMinutes == 60},
-		{Text: "3 hours", Clicked: func() { preventSleep(180) }, State: cafMinutes == 180},
+		{Text: "Indefinitely", Clicked: func() { preventSleep(0) }, State: sleepOptionSelected(0)},
+		//{Text: "1 min (testing)", Clicked: func() {preventSleep(1) }, State: sleepOptionSelected(1)},
+		{Text: "10 minutes", Clicked: func() { preventSleep(10) }, State: sleepOptionSelected(10)},
+		{Text: "30 minutes", Clicked: func() { preventSleep(30) }, State: sleepOptionSelected(30)},
+		{Text: "1 hour", Clicked: func() { preventSleep(60) }, State: sleepOptionSelected(60)},
+		{Text: "3 hours", Clicked: func() { preventSleep(180) }, State: sleepOptionSelected(180)},
 	}
 }
 
@@ -69,6 +69,13 @@ func cancelSleepPrevention() {
 
 func preventingSleep() bool {
 	return cafPID != 0
+}
+
+func sleepOptionSelected(minutes int) bool {
+	if cafPID == 0 {
+		return false
+	}
+	return minutes == cafMinutes
 }
 
 func preventionRemaining() string {

@@ -29,7 +29,7 @@ func canSleep() bool {
 	return true
 }
 
-func menuItems(item menuet.MenuItem) []menuet.MenuItem {
+func menuItems() []menuet.MenuItem {
 	items := make([]menuet.MenuItem, 0)
 
 	if preventingSleep() {
