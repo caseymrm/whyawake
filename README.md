@@ -3,7 +3,7 @@ An OSX menu bar app to let you know when an application is keeping your computer
 
 ## Install
 
-* [Download the app](https://github.com/caseymrm/whyawake/releases/download/v0.3/WhyAwake.app.zip)
+* [Download the app](https://github.com/caseymrm/whyawake/releases/download/v0.5/WhyAwake.app.zip)
 * Unzip it
 * Put it in Applications
 * Run it
