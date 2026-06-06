@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"syscall"
 
+	"github.com/caseymrm/go-clamshell"
 	"github.com/caseymrm/go-pmset"
 	"github.com/caseymrm/menuet"
 )
@@ -111,6 +112,14 @@ func monitorAssertionChanges(channel chan pmset.AssertionChange) {
 	}
 }
 
+func monitorClamshell(channel chan bool) {
+	for closed := range channel {
+		if closed && preventingSleep() && cafMinutes == lidMode {
+			cancelSleepPrevention()
+		}
+	}
+}
+
 func killProcess(pid int) {
 	response := menuet.App().Alert(menuet.Alert{
 		MessageText:     "Kill process?",
@@ -131,12 +140,15 @@ func main() {
 	assertionsChannel := make(chan pmset.AssertionChange)
 	pmset.SubscribeAssertionChanges(assertionsChannel)
 	go monitorAssertionChanges(assertionsChannel)
+	clamshellChannel := make(chan bool, 4)
+	clamshell.SubscribeClamshellChanges(clamshellChannel)
+	go monitorClamshell(clamshellChannel)
 	setMenuState()
 	app := menuet.App()
 	app.Name = "Why Awake?"
 	app.Label = "com.github.caseymrm.whyawake"
 	app.Children = menuItems
-	app.AutoUpdate.Version = "v0.6"
+	app.AutoUpdate.Version = "v0.7"
 	app.AutoUpdate.Repo = "caseymrm/whyawake"
 	app.RunApplication()
 }

@@ -1,22 +1,21 @@
-## v0.6 — Apple Silicon universal build
+## v0.7 — "Until I close the lid"
 
-First release supporting Apple Silicon natively. Universal binary (`x86_64` + `arm64`).
+New sleep-prevention option: **Until I close the lid**. Pick it from the menu, get on with your work, and the moment you close the lid the app stops caffeinating and lets the system sleep normally — no timer to guess at, no manual deactivation.
 
-### What changed
-- Universal `darwin/amd64` + `darwin/arm64` binary via `lipo` (was: `amd64` only).
-- Modernized build to Go modules; new `Makefile` handles both arches and packaging.
-- Picked up [`menuet` v1.1.0](https://github.com/caseymrm/menuet/releases/tag/v1.1.0), which migrated notifications off the deprecated `NSUserNotificationCenter` to `UNUserNotificationCenter` (closes the long-standing menuet issue #18).
-- `LSMinimumSystemVersion` bumped to **macOS 10.14** (the floor required by the `UserNotifications` framework).
+### How it works
+A new sister library, [`caseymrm/go-clamshell`](https://github.com/caseymrm/go-clamshell), subscribes to IOKit's `kIOPMMessageClamshellStateChange` push notification (no polling — the kernel tells us the moment the lid moves). When the state flips to closed *and* you're in lid mode, whyawake calls `caffeinate.Stop()` and the deferred sleep proceeds.
+
+### Other
+- Picks up `go-clamshell` v1.0.1.
+- Closes #1.
 
 ### Gatekeeper warning
-This build is **unsigned** (ad-hoc only) and **not notarized**. On first launch macOS will refuse to open it. To open:
+This build is still **unsigned** (ad-hoc only). To open:
 
 1. Right-click `WhyAwake.app` → **Open** → confirm in the dialog, **or**
-2. Run `xattr -dr com.apple.quarantine /Applications/WhyAwake.app` after copying it to `/Applications`.
-
-A signed + notarized build will come back once the Developer ID identity is restored.
+2. Run `xattr -dr com.apple.quarantine /Applications/WhyAwake.app` after copying to `/Applications`.
 
 ### Install
 - Download `WhyAwake.app.zip` below.
-- Unzip, drag `WhyAwake.app` to `/Applications`.
+- Unzip, drag to `/Applications`.
 - Launch (see Gatekeeper note above).
