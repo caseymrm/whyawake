@@ -16,12 +16,12 @@ const lidMode = -1
 
 func sleepOptions() []menuet.MenuItem {
 	return []menuet.MenuItem{
-		{Text: "Until I close the lid", Clicked: func() { preventSleep(lidMode) }, State: sleepOptionSelected(lidMode)},
-		{Text: "Indefinitely", Clicked: func() { preventSleep(0) }, State: sleepOptionSelected(0)},
-		{Text: "10 minutes", Clicked: func() { preventSleep(10) }, State: sleepOptionSelected(10)},
-		{Text: "30 minutes", Clicked: func() { preventSleep(30) }, State: sleepOptionSelected(30)},
-		{Text: "1 hour", Clicked: func() { preventSleep(60) }, State: sleepOptionSelected(60)},
-		{Text: "3 hours", Clicked: func() { preventSleep(180) }, State: sleepOptionSelected(180)},
+		menuet.Regular{Text: "Until I close the lid", Clicked: func() { preventSleep(lidMode) }, State: sleepOptionSelected(lidMode)},
+		menuet.Regular{Text: "Indefinitely", Clicked: func() { preventSleep(0) }, State: sleepOptionSelected(0)},
+		menuet.Regular{Text: "10 minutes", Clicked: func() { preventSleep(10) }, State: sleepOptionSelected(10)},
+		menuet.Regular{Text: "30 minutes", Clicked: func() { preventSleep(30) }, State: sleepOptionSelected(30)},
+		menuet.Regular{Text: "1 hour", Clicked: func() { preventSleep(60) }, State: sleepOptionSelected(60)},
+		menuet.Regular{Text: "3 hours", Clicked: func() { preventSleep(180) }, State: sleepOptionSelected(180)},
 	}
 }
 

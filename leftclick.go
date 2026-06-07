@@ -99,7 +99,7 @@ func leftClickDefaultMenu() []menuet.MenuItem {
 	items := make([]menuet.MenuItem, len(leftClickChoices))
 	for i, c := range leftClickChoices {
 		stored := c.stored
-		items[i] = menuet.MenuItem{
+		items[i] = menuet.Regular{
 			Text:    c.label,
 			State:   current == stored,
 			Clicked: func() { setLeftClickStored(stored) },

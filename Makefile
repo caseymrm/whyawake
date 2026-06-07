@@ -1,6 +1,6 @@
 APP=WhyAwake
 EXE=whyawake
-VERSION=v0.8
+VERSION=v0.9
 IDENTITY=Developer ID Application: Rational Creation LLC (AP2AEA9WAW)
 IDENTIFIER=whyawake.caseymrm.github.com
 
@@ -58,7 +58,7 @@ notarize: sign zip
 
 release: zip
 	gh release create $(VERSION) $(BUILD)/$(APP).app.zip \
-	  --title "$(VERSION) — Default left-click action" \
+	  --title "$(VERSION) — menuet v2.2.0 (interface MenuItem)" \
 	  --notes-file RELEASE_NOTES.md
 
 clean:

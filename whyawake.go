@@ -34,16 +34,17 @@ func menuItems() []menuet.MenuItem {
 	items := make([]menuet.MenuItem, 0)
 
 	if preventingSleep() {
-		items = append(items, menuet.MenuItem{
+		items = append(items, menuet.Regular{
 			Text:     preventionRemaining(),
 			FontSize: 12,
 		})
-		items = append(items, menuet.MenuItem{
-			Text:    "Deactivate",
-			Clicked: cancelSleepPrevention,
-		}, menuet.MenuItem{
-			Type: menuet.Separator,
-		})
+		items = append(items,
+			menuet.Regular{
+				Text:    "Deactivate",
+				Clicked: cancelSleepPrevention,
+			},
+			menuet.Separator{},
+		)
 	}
 
 	processes := make([]menuet.MenuItem, 0)
@@ -54,7 +55,7 @@ func menuItems() []menuet.MenuItem {
 			if pid.PID == cafPID {
 				continue
 			}
-			processes = append(processes, menuet.MenuItem{
+			processes = append(processes, menuet.Regular{
 				Text: pid.Name,
 				Clicked: func() {
 					killProcess(pid.PID)
@@ -67,30 +68,26 @@ func menuItems() []menuet.MenuItem {
 		if len(processes) > 1 {
 			text = fmt.Sprintf("%d processes keeping your Mac awake", len(processes))
 		}
-		items = append(items, menuet.MenuItem{
+		items = append(items, menuet.Regular{
 			Text:     text,
 			FontSize: 12,
 		})
 		items = append(items, processes...)
 	} else if !preventingSleep() {
-		items = append(items, menuet.MenuItem{
+		items = append(items, menuet.Regular{
 			Text: "Your Mac can sleep",
 		})
 	}
 
-	items = append(items, menuet.MenuItem{
-		Type: menuet.Separator,
-	})
-	items = append(items, menuet.MenuItem{
+	items = append(items, menuet.Separator{})
+	items = append(items, menuet.Regular{
 		Text:     "Keep this Mac awake",
 		FontSize: 12,
 	})
 	items = append(items, sleepOptions()...)
 
-	items = append(items, menuet.MenuItem{
-		Type: menuet.Separator,
-	})
-	items = append(items, menuet.MenuItem{
+	items = append(items, menuet.Separator{})
+	items = append(items, menuet.Regular{
 		Text:     leftClickDefaultLabel(),
 		FontSize: 12,
 		Children: leftClickDefaultMenu,
@@ -157,7 +154,7 @@ func main() {
 	app.Name = "Why Awake?"
 	app.Label = "com.github.caseymrm.whyawake"
 	app.Children = menuItems
-	app.AutoUpdate.Version = "v0.8"
+	app.AutoUpdate.Version = "v0.9"
 	app.AutoUpdate.Repo = "caseymrm/whyawake"
 	refreshLeftClickHandler()
 	app.RunApplication()
