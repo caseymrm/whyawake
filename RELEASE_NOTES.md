@@ -1,21 +1,17 @@
-## v0.7 — "Until I close the lid"
+## v0.8 — Default left-click action
 
-New sleep-prevention option: **Until I close the lid**. Pick it from the menu, get on with your work, and the moment you close the lid the app stops caffeinating and lets the system sleep normally — no timer to guess at, no manual deactivation.
+Pick a default duration from the new **Left-click** submenu, and from then on a single left-click on the menubar icon toggles caffeinate at that duration — no menu, no submenu. Right-click (or Ctrl-click) still opens the full menu.
 
-### How it works
-A new sister library, [`caseymrm/go-clamshell`](https://github.com/caseymrm/go-clamshell), subscribes to IOKit's `kIOPMMessageClamshellStateChange` push notification (no polling — the kernel tells us the moment the lid moves). When the state flips to closed *and* you're in lid mode, whyawake calls `caffeinate.Stop()` and the deferred sleep proceeds.
+### What changed
+- New **"Left-click: …"** menu section. Choices: Off · Until I close the lid · Indefinitely · 10 / 30 / 60 / 180 min. Stored in NSUserDefaults; the current choice is shown in the parent label and persists across launches.
+- When a default is set, left-click *toggles*: if the Mac is being kept awake, the click cancels it; otherwise it starts a new session at the chosen duration. (Accidentally caffeinated → one click to undo.)
+- Picks up `menuet` v2.1.1 (new `Application.Clicked` field, plus the v2 Go module path fix).
+- Closes #2.
 
-### Other
-- Picks up `go-clamshell` v1.0.1.
-- Closes #1.
-
-### Gatekeeper warning
-This build is still **unsigned** (ad-hoc only). To open:
-
-1. Right-click `WhyAwake.app` → **Open** → confirm in the dialog, **or**
-2. Run `xattr -dr com.apple.quarantine /Applications/WhyAwake.app` after copying to `/Applications`.
+### Gatekeeper
+Still **unsigned** (ad-hoc only).
+1. Right-click `WhyAwake.app` → **Open** → confirm, **or**
+2. `xattr -dr com.apple.quarantine /Applications/WhyAwake.app` after copying to `/Applications`.
 
 ### Install
-- Download `WhyAwake.app.zip` below.
-- Unzip, drag to `/Applications`.
-- Launch (see Gatekeeper note above).
+Download `WhyAwake.app.zip` → unzip → drag to `/Applications` → launch (see Gatekeeper note).

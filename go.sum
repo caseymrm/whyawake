@@ -6,5 +6,5 @@ github.com/caseymrm/go-clamshell v1.0.1 h1:BWUf0uIPyT/aQ+QNnKOuJeI6iwvW2xMxfiPGx
 github.com/caseymrm/go-clamshell v1.0.1/go.mod h1:EH815Qd3cw5WHTqwn4i+TtjTns9tlpn0v/Nf5PIhu/0=
 github.com/caseymrm/go-pmset v1.0.0 h1:iXc5GlLSqdR0C0GW9nvxvF02ynUkbeVNhAPoYPW+psg=
 github.com/caseymrm/go-pmset v1.0.0/go.mod h1:MYha1Z8OJEvuLrM+7xZGkPGwpkzJ5uZ+M89hJkQoFD4=
-github.com/caseymrm/menuet v1.1.0 h1:t40I1SDjKmV+9ChftbiUpOwaKc76ZWhOx4Umy1ehkjs=
-github.com/caseymrm/menuet v1.1.0/go.mod h1:Vdn4A7NdnGnx9CwlhyhAn4ii5xrpQkvaONdzpTyJ4j0=
+github.com/caseymrm/menuet/v2 v2.1.1 h1:9Iv0bP40xYHZJySwIDljrWEGYf2bNd8J1NMgWNED11k=
+github.com/caseymrm/menuet/v2 v2.1.1/go.mod h1:ZFPTrTUdPWdVFjb6FQPbbDNtYD0X3/svM+QTkMYFHjM=

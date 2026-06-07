@@ -6,7 +6,7 @@ import (
 
 	"github.com/caseymrm/go-clamshell"
 	"github.com/caseymrm/go-pmset"
-	"github.com/caseymrm/menuet"
+	"github.com/caseymrm/menuet/v2"
 )
 
 var sleepKeywords = map[string]bool{
@@ -87,6 +87,15 @@ func menuItems() []menuet.MenuItem {
 	})
 	items = append(items, sleepOptions()...)
 
+	items = append(items, menuet.MenuItem{
+		Type: menuet.Separator,
+	})
+	items = append(items, menuet.MenuItem{
+		Text:     leftClickDefaultLabel(),
+		FontSize: 12,
+		Children: leftClickDefaultMenu,
+	})
+
 	return items
 }
 
@@ -148,7 +157,8 @@ func main() {
 	app.Name = "Why Awake?"
 	app.Label = "com.github.caseymrm.whyawake"
 	app.Children = menuItems
-	app.AutoUpdate.Version = "v0.7"
+	app.AutoUpdate.Version = "v0.8"
 	app.AutoUpdate.Repo = "caseymrm/whyawake"
+	refreshLeftClickHandler()
 	app.RunApplication()
 }
