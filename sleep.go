@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/caseymrm/go-caffeinate"
-	"github.com/caseymrm/menuet"
+	"github.com/caseymrm/menuet/v2"
 )
 
 // lidMode is a sentinel value for cafMinutes meaning "keep awake until the
