@@ -1,0 +1,193 @@
+{
+  "schema": "menuet-snapshot/v1",
+  "state": {
+    "Title": "",
+    "Runs": null,
+    "Image": "Eye.pdf"
+  },
+  "items": [
+    {
+      "type": "regular",
+      "text": "Your Mac can sleep",
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "separator",
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "regular",
+      "text": "Keep this Mac awake",
+      "fontSize": 12,
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "regular",
+      "text": "Until I close the lid",
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "regular",
+      "text": "Indefinitely",
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "regular",
+      "text": "10 minutes",
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "regular",
+      "text": "30 minutes",
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "regular",
+      "text": "1 hour",
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "regular",
+      "text": "3 hours",
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "separator",
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      }
+    },
+    {
+      "type": "regular",
+      "text": "Left-click: Off",
+      "fontSize": 12,
+      "color": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 0
+      },
+      "children": [
+        {
+          "type": "regular",
+          "text": "Off",
+          "color": {
+            "R": 0,
+            "G": 0,
+            "B": 0,
+            "A": 0
+          },
+          "state": true
+        },
+        {
+          "type": "regular",
+          "text": "Until I close the lid",
+          "color": {
+            "R": 0,
+            "G": 0,
+            "B": 0,
+            "A": 0
+          }
+        },
+        {
+          "type": "regular",
+          "text": "Indefinitely",
+          "color": {
+            "R": 0,
+            "G": 0,
+            "B": 0,
+            "A": 0
+          }
+        },
+        {
+          "type": "regular",
+          "text": "10 minutes",
+          "color": {
+            "R": 0,
+            "G": 0,
+            "B": 0,
+            "A": 0
+          }
+        },
+        {
+          "type": "regular",
+          "text": "30 minutes",
+          "color": {
+            "R": 0,
+            "G": 0,
+            "B": 0,
+            "A": 0
+          }
+        },
+        {
+          "type": "regular",
+          "text": "1 hour",
+          "color": {
+            "R": 0,
+            "G": 0,
+            "B": 0,
+            "A": 0
+          }
+        },
+        {
+          "type": "regular",
+          "text": "3 hours",
+          "color": {
+            "R": 0,
+            "G": 0,
+            "B": 0,
+            "A": 0
+          }
+        }
+      ]
+    }
+  ]
+}
