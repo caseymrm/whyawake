@@ -1,6 +1,6 @@
 APP=WhyAwake
 EXE=whyawake
-VERSION=v0.9
+VERSION=v0.10
 IDENTITY ?= Developer ID Application: Casey Muller (AZGE7WP274)
 IDENTIFIER=whyawake.caseymrm.github.com
 
@@ -66,7 +66,7 @@ notarize: sign zip
 
 release: zip
 	gh release create $(VERSION) $(BUILD)/$(APP).app.zip \
-	  --title "$(VERSION) — menuet v2.2.0 (interface MenuItem)" \
+	  --title "$(VERSION)" \
 	  --notes-file RELEASE_NOTES.md
 
 clean:

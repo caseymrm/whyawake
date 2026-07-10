@@ -1,14 +1,20 @@
-## v0.9 — menuet v2.2.0
+## v0.10 — signed & notarized
 
-Maintenance bump. No user-visible changes — the app behaves the same as v0.8.
+First release signed with a Developer ID certificate and notarized by
+Apple. No code changes beyond the menuet upgrade — the headline is
+distribution quality.
 
 ### What changed
-- Picks up [menuet v2.2.0](https://github.com/caseymrm/menuet/releases/tag/v2.2.0), where `MenuItem` becomes a Go interface with `Regular` and `Separator` as the first two concrete implementations. All internal call sites migrated:
-  - `menuet.MenuItem{Text: …}` → `menuet.Regular{Text: …}`
-  - `menuet.MenuItem{Type: menuet.Separator}` → `menuet.Separator{}`
-- Slice element types in `[]menuet.MenuItem` literals are now qualified, as the new interface requires.
+- **Signed + notarized**: hardened runtime, secure timestamp, stapled
+  notarization ticket. Downloads open without the "unidentified
+  developer" warning — no right-click-Open, no `xattr` workaround.
+- **Notifications now work**: `UNUserNotificationCenter` requires a
+  Developer ID signature; previous ad-hoc builds silently dropped
+  notifications.
+- Picks up [menuet v2.10.4](https://github.com/caseymrm/menuet/releases/tag/v2.10.4)
+  (snapshot mode for the [menuet.app](https://menuet.app/apps/whyawake/)
+  showcase, hardened-runtime signing in menuet.mk).
 
 ### Gatekeeper
-Still **unsigned** (ad-hoc only).
-1. Right-click `WhyAwake.app` → **Open** → confirm, **or**
-2. `xattr -dr com.apple.quarantine /Applications/WhyAwake.app` after copying to `/Applications`.
+Just download, unzip, and open. The quarantine instructions from
+earlier releases are no longer needed.
