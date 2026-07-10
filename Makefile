@@ -1,7 +1,7 @@
 APP=WhyAwake
 EXE=whyawake
 VERSION=v0.9
-IDENTITY=Developer ID Application: Rational Creation LLC (AP2AEA9WAW)
+IDENTITY ?= Developer ID Application: Casey Muller (AZGE7WP274)
 IDENTIFIER=whyawake.caseymrm.github.com
 
 SDK=$(shell xcrun --sdk macosx --show-sdk-path)
