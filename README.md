@@ -3,10 +3,10 @@ An OSX menu bar app to let you know when an application is keeping your computer
 
 ## Install
 
-* [Download the app](https://github.com/caseymrm/whyawake/releases/download/v0.5/WhyAwake.app.zip)
+* [Download the app](https://github.com/caseymrm/whyawake/releases/latest/download/WhyAwake.app.zip)
 * Unzip it
 * Put it in Applications
-* Run it
+* Run it — releases are signed and notarized (since v0.10), so no Gatekeeper warning
 * To run every time you login, select "start at login" from the menu bar
 
 ## Screenshots
