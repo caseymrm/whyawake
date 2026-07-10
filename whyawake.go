@@ -154,7 +154,7 @@ func main() {
 	app.Name = "Why Awake?"
 	app.Label = "com.github.caseymrm.whyawake"
 	app.Children = menuItems
-	app.AutoUpdate.Version = "v0.9"
+	app.AutoUpdate.Version = "v0.10"
 	app.AutoUpdate.Repo = "caseymrm/whyawake"
 	refreshLeftClickHandler()
 	app.RunApplication()
